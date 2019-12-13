@@ -24,6 +24,8 @@ architecture bhv of vga_datapath is
 
 	signal zoom_counter_reg : unsigned(3 downto 0) := (others => '0');
 
+	signal display_enable_reg : std_logic := '0';
+
 	--signal pixel_debug : std_logic_vector(15 downto 0) := "0000000010000000";
 begin
 
@@ -37,29 +39,39 @@ begin
 			zoom_counter_reg	<= (others => '0');
 		
 		elsif (clock = '1' and clock'event) then
+
+			display_enable_reg <= display_enable;
+
 			fifo_r_req 	<= '0';
 			--pixel_reg 	<= fifo_r_data;
 
-			zoom_counter_reg <= zoom_counter_reg + 1;
-			if (zoom_counter_reg = 0) then 
+			if (display_enable = '1') then			
+				
+
+				zoom_counter_reg <= zoom_counter_reg + 1;
+				if (zoom_counter_reg = 0) then 
 
 -----------------------------
-			if (display_enable = '1') then			
-				pixel_counter_reg 	<= pixel_counter_reg + 1;
-				if (pixel_counter_reg = 0) then
-					pixel_reg 			<= fifo_r_data;
-					fifo_r_req 	 		<= '1';
-				elsif (pixel_counter_reg = 15) then
-					pixel_counter_reg 	<= (others => '0');
-					pixel_reg 			<= pixel_reg(14 downto 0) & '0';
-				else
-					pixel_reg 			<= pixel_reg(14 downto 0) & '0';
-				end if;
-			end if;
+					pixel_counter_reg 	<= pixel_counter_reg + 1;
+					if (pixel_counter_reg = 0) then
+						pixel_reg 			<= fifo_r_data;
+						fifo_r_req 	 		<= '1';
+					elsif (pixel_counter_reg = 15) then
+						pixel_counter_reg 	<= (others => '0');
+						pixel_reg 			<= pixel_reg(14 downto 0) & '0';
+					else
+						pixel_reg 			<= pixel_reg(14 downto 0) & '0';
+					end if;
 ------------------------------
 
-			elsif (zoom_counter_reg = 7) then 
-				zoom_counter_reg <= (others => '0');
+				elsif (zoom_counter_reg = 7) then 
+					zoom_counter_reg <= (others => '0');
+				end if;
+
+			else
+				zoom_counter_reg 	<= (others => '0');
+				pixel_reg 			<= (others => '0');
+				pixel_counter_reg 	<= (others => '0');
 			end if;
 
 		end if;
@@ -69,8 +81,8 @@ begin
 	g_s <= pixel_reg(15);
 	b_s <= pixel_reg(15);-- xor pixel_in(3);
 
-	r_out <= r_s when (display_enable = '1') else '0';
-	g_out <= g_s when (display_enable = '1') else '0';
-	b_out <= b_s when (display_enable = '1') else '0';
+	r_out <= r_s when (display_enable_reg = '1') else '0';
+	g_out <= g_s when (display_enable_reg = '1') else '0';
+	b_out <= b_s when (display_enable_reg = '1') else '0';
 
 end architecture;

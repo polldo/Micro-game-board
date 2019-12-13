@@ -32,7 +32,10 @@ architecture bhv of spi_rx is
 	signal bit_counter 		: unsigned(4 downto 0) := (others => '0');
 	signal transfer_complete_s, transfer_complete_old_s : std_logic := '0';
 
-	signal transfer_sync_s : unsigned(4 downto 0) := (others => '0');
+	signal transfer_sync_s : unsigned(10 downto 0) := (others => '0');
+
+
+	signal data_temp : std_logic_vector(16 downto 0) := (others => '0');
 
 begin
 
@@ -53,17 +56,32 @@ begin
 				transfer_reg <= '0';
 			end if;
 
-			if (transfer_complete_s = '1') then
-				if (transfer_sync_s = 10) then
-					data_reg 		<= data_received_s;						
-					transfer_reg 	<= '1';
+			if (data_temp(16) = '1') then
+				if (transfer_sync_s = 4) then
+					data_reg <= data_temp(15 downto 0);
+					transfer_reg <= '1';
 				end if;
-				if (transfer_sync_s <= 10) then
+				if (transfer_sync_s <= 4) then
 					transfer_sync_s <= transfer_sync_s + 1;
 				end if;
-			else 
-				transfer_sync_s <= (others => '0');
+			else
+				transfer_sync_s <= to_unsigned(0, transfer_sync_s'length);
 			end if;
+
+
+			--if (transfer_complete_s = '1') then
+			--	if (transfer_sync_s = 50) then
+			--		data_reg 		<= data_received_s;						
+			--		transfer_reg 	<= '1';
+			--	end if;
+			--	if (transfer_sync_s <= 50) then
+			--		transfer_sync_s <= transfer_sync_s + 1;
+			--	end if;
+			--else 
+			--	transfer_sync_s <= (others => '0');
+			--end if;
+
+
 			
 			--transfer_complete_old_s <= transfer_complete_s;
 			--if (transfer_complete_old_s = '0' and transfer_complete_s = '1') then
@@ -86,8 +104,11 @@ begin
 			data_received_s		<= (others => '0');
 			transfer_complete_s <= '0';
 		elsif (spi_clock = '1' and spi_clock'event) then
+
+			data_temp(16) <= '0';
+
 		--if (spi_clock = '1' and spi_clock'event) then
-			transfer_complete_s <= '0';
+			--transfer_complete_s <= '0';
 			bit_counter 		<= bit_counter + 1;
 			data_received_s 	<= data_received_s(14 downto 0) & spi_data;
 
@@ -97,8 +118,11 @@ begin
 			--debug_reference_clock <= not debug_reference_clock;
 
 			if (bit_counter = 15) then
+
+				data_temp <= '1' & data_received_s(14 downto 0) & spi_data;
+
 				bit_counter 		<= (others => '0');
-				transfer_complete_s	<= '1';
+				--transfer_complete_s	<= '1';
 			end if;
 		end if;
 	end process;
