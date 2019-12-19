@@ -63,18 +63,20 @@ begin
 
 	--debug_spi <= debug_spi_reg;
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			state_reg 			<= FETCH_STATE;
-			cmd_reg				<= (others => '0');
-			image_counter_reg	<= (others => '0');
-		elsif (clock = '1' and clock'event) then
-			state_reg			<= state_next;
-			cmd_reg				<= cmd_next;
-			image_counter_reg	<= image_counter_next;
+		if (clock = '1' and clock'event) then		
+			if (reset = '1') then
+				state_reg 			<= FETCH_STATE;
+				cmd_reg				<= (others => '0');
+				image_counter_reg	<= (others => '0');
+			else
+				state_reg			<= state_next;
+				cmd_reg				<= cmd_next;
+				image_counter_reg	<= image_counter_next;
 
-			--debug_spi_reg <= debug_spi_next;
+				--debug_spi_reg <= debug_spi_next;
+			end if;
 		end if;
 	end process;
 

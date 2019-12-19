@@ -25,25 +25,21 @@ entity top_entity is
 		spi_enable			: in std_logic;
 		spi_clock			: in std_logic;
 		spi_data				: in std_logic
-		-- Memory tester signals
-		--;button_in 			: in 	std_logic
-		--;led_out				: out std_logic_vector(2 downto 0)
-		;debug_spi : out std_logic_vector(3 downto 0)
 	);
 end entity;
 
 architecture struct of top_entity is
 
 	component dcm_pll is
-		port ( CLKIN_IN        : in    std_logic; 
-				 CLKIN_IBUFG_OUT : out   std_logic; 
-				 CLK0_OUT        : out   std_logic; 
-				 CLK2X_OUT       : out   std_logic);
+		port ( 	CLKIN_IN        : in    std_logic; 
+				CLKIN_IBUFG_OUT : out   std_logic; 
+				CLK0_OUT        : out   std_logic; 
+				CLK2X_OUT       : out   std_logic);
 	end component;
 	
 	component dcm_pll_shift is
-		port ( CLKIN_IN : in    std_logic; 
-				 CLK0_OUT : out   std_logic);
+		port ( 	CLKIN_IN : in    std_logic; 
+				CLK0_OUT : out   std_logic);
 	end component;
 
 	component memory_controller is
@@ -73,30 +69,6 @@ architecture struct of top_entity is
 			sdram_ras_n			: out std_logic;
 			sdram_cas_n 		: out std_logic;
 			sdram_we_n 			: out std_logic
-		);
-	end component;
-
-	component memory_tester is
-		port    
-		(
-			clock				: in std_logic;
-			reset 				: in std_logic;
-			-- Read port
-			read_req			: out std_logic;
-			read_address		: out std_logic_vector(23 downto 0);
-			read_length			: out std_logic_vector(8 downto 0);
-			read_data			: in std_logic_vector(15 downto 0);
-			read_ready			: in std_logic;
-			read_data_valid		: in std_logic;
-			-- Write port
-			write_req			: out std_logic;
-			write_address		: out std_logic_vector(23 downto 0);
-			write_data			: out std_logic_vector(15 downto 0);
-			write_ready			: in std_logic;
-			write_done			: in std_logic;
-			-- Test port
-			button_in			: in std_logic;
-			led_out				: out std_logic_vector(2 downto 0)
 		);
 	end component;
 
@@ -132,7 +104,6 @@ architecture struct of top_entity is
 	
 	
 	component spi is
-	--component spi_mem is
 	port    
 	(
 		clock				: in std_logic;
@@ -147,26 +118,6 @@ architecture struct of top_entity is
 		mem_write_req		: out std_logic;
 		mem_write_address	: out std_logic_vector(23 downto 0);
 		mem_write_data		: out std_logic_vector(15 downto 0)
-				;debug_spi : out std_logic_vector(3 downto 0)
-
-	);
-	end component;
-
-	component tester_read_memory is
-	port    
-	(
-		clock				: in std_logic;
-		reset 				: in std_logic;
-		-- Read port
-		read_req			: out std_logic;
-		read_address		: out std_logic_vector(23 downto 0);
-		read_length			: out std_logic_vector(8 downto 0);
-		read_data			: in std_logic_vector(15 downto 0);
-		read_ready			: in std_logic;
-		read_data_valid		: in std_logic;
-		-- Test port
-		button_in			: in std_logic;
-		led_out				: out std_logic_vector(2 downto 0)
 	);
 	end component;
 
@@ -177,8 +128,6 @@ architecture struct of top_entity is
 	signal reset_s		: std_logic;
 	-- VGA signals
 	signal vga_v_sync_s, vga_h_sync_s 	: std_logic;
-	--signal ram_read_data_s		: std_logic_vector(7 downto 0);
-	--signal ram_read_address_s	: integer range 0 to 80000;--std_logic_vector(31 downto 0);
 	-- Memory Controller signals
 	-- Read port signals
 	signal read_req_s			: std_logic;
@@ -196,90 +145,88 @@ architecture struct of top_entity is
 
 begin
 
+	-- VGA output signal assignment
 	vga_h_sync <= vga_h_sync_s;
 	vga_v_sync <= vga_v_sync_s;
+	-- SDRAM clock phase is shifted, to not violate timings
 	sdram_clock <= clock_100_shift_s;
+	-- SDRAM data is never masked
 	sdram_umqm 	<= '0';
 	sdram_ldqm 	<= '0';
-	
+	-- High active reset.
 	reset_s <= not reset_n;
 
-	PLL_CLK: dcm_pll port map(clock, open, clock_s, clock_100_s);
+------------------------------------- 
+-- Clock generation components: 
+--	clock 				@ 50 MHz	
+--  clock_100_s 		@ 100 MHz  	
+--  clock_100_shift_s 	@ 100 MHz, Phase shift: 70
+
+	PLL_CLK: dcm_pll port map
+	(
+		CLKIN_IN 		=> clock,
+		CLKIN_IBUFG_OUT	=> open,
+		CLK0_OUT		=> clock_s,
+		CLK2X_OUT		=> clock_100_s
+	);
 	
-	PLL_CLK_SHFT: dcm_pll_shift port map(clock_100_s, clock_100_shift_s);
-
-	--MEM_TST: memory_tester port map(clock_100_s, reset_s, read_req_s, read_address_s, read_length_s, read_data_s, read_ready_s, read_data_valid_s,
-		--												write_req_s, write_address_s, write_data_s, write_ready_s, write_done_s, button_in, led_out);
-	--MEM_TST: memory_tester port map
-	--(
-	--	clock 			=> clock_100_s,
-	--	reset 			=> reset_s,
-	--	read_req 		=> read_req_s,
-	--	read_address	=> read_address_s,
-	--	read_length		=> read_length_s,
-	--	read_data		=> read_data_s,
-	--	read_ready		=> read_ready_s,
-	--	read_data_valid	=> read_data_valid_s,
-
-	--	write_req		=> open,
-	--	write_address	=> open,
-	--	write_data		=> open,
-	--	write_ready		=> '0',
-	--	write_done		=> '0',
-
-	--	--write_req		=> write_req_s,
-	--	--write_address	=> write_address_s,
-	--	--write_data		=> write_data_s,
-	--	--write_ready		=> write_ready_s,
-	--	--write_done		=> write_done_s,
-
-	--	button_in		=> button_in,
-	--	led_out			=> led_out
-	--);
-
-	--TST_INST: tester_read_memory port map
-	--(
-	--	clock				=> clock_100_s,
-	--	reset 				=> reset_s,
-	--	read_req			=> read_req_s,
-	--	read_address		=> read_address_s,
-	--	read_length			=> read_length_s,
-	--	read_data			=> read_data_s,
-	--	read_ready			=> read_ready_s,
-	--	read_data_valid		=> read_data_valid_s,
-	--	button_in			=> button_in,
-	--	led_out				=> led_out
-	--);
+	PLL_CLK_SHFT: dcm_pll_shift port map
+	(
+		CLKIN_IN => clock_100_s,
+		CLK0_OUT => clock_100_shift_s
+	);
+--------------------------------------
+-- SPI slave. 
+-- Responsible for receiving data in block of 16 bit and saving 
+-- them into the SDRAM
 
 	SPI_INST: spi port map
-	--SPI_INST: spi_mem port map
 	(
 		clock				=> clock_100_s,
 		reset				=> reset_s,
 		spi_enable			=> spi_enable,
 		spi_clock			=> spi_clock,
 		spi_data			=> spi_data,
-
 		mem_write_ready		=> write_ready_s,
 		mem_write_done		=> write_done_s,
 		mem_write_req		=> write_req_s,
 		mem_write_address	=> write_address_s,
 		mem_write_data		=> write_data_s
-
-		--mem_write_ready		=> '0',
-		--mem_write_done		=> '0',
-		--mem_write_req		=> open,
-		--mem_write_address	=> open,
-		--mem_write_data		=> open
-				,debug_spi => debug_spi
 	);
 	
-	--RAM: memory port map(clock, (others => '0'), 0, ram_read_address_s, '0', ram_read_data_s);
-	MEM_CTRL: memory_controller port map(clock_100_s, reset_s, read_req_s, read_address_s, read_length_s, read_data_s, read_ready_s, read_data_valid_s,
-														write_req_s, write_address_s, write_data_s, write_ready_s, write_done_s,
-														sdram_data, sdram_bank, sdram_address, sdram_cke, sdram_cs_n, sdram_ras_n, sdram_cas_n, sdram_we_n);
+-------------------------------------
+-- SDRAM Memory Controller
+-- Performs burst reads of arbitrary length and single write
 
-	--DISPLAY_CTRL: display_controller port map(clock, vga_display_enable_s, vga_v_sync_s, (others => '0'), open, vga_pixel_s);
+	MEM_CTRL: memory_controller port map
+    (
+        clock            => clock_100_s, 
+        reset            => reset_s, 
+        read_req         => read_req_s,
+        read_address     => read_address_s,
+        read_length      => read_length_s,
+        read_data        => read_data_s,
+        read_ready       => read_ready_s,
+        read_data_valid  => read_data_valid_s,
+        write_req        => write_req_s,
+        write_address    => write_address_s,
+        write_data       => write_data_s,
+        write_ready      => write_ready_s,
+        write_done       => write_done_s,
+        sdram_data       => sdram_data,
+        sdram_bank       => sdram_bank,
+        sdram_address    => sdram_address,
+        sdram_cke        => sdram_cke,
+        sdram_cs_n       => sdram_cs_n,
+        sdram_ras_n      => sdram_ras_n,
+        sdram_cas_n      => sdram_cas_n,
+        sdram_we_n       => sdram_we_n
+    );
+
+--------------------------------------
+-- VGA component
+-- reads an image from the SDRAM memory and outputs it following VGA standard
+-- resolution: 800x600     Hz: 60 
 
 	VGA_COMP: vga port map
 	(

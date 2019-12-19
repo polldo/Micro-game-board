@@ -104,66 +104,67 @@ begin
 	addr_row_s	<= address_buff_reg(21 downto 9); 
 	addr_col_s	<= address_buff_reg(8 downto 0);
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			-- Reset registers' state
-			state_reg				<= IDLE_STATE;
-			bank_reg				<= (others => 'Z');
-			address_reg 			<= (others => 'Z');
-			cmd_reg					<= (others => 'Z'); -- could be a problem
-			r_data_reg				<= (others => 'Z');
-			r_buff_req_reg			<= '0';
-			r_ready_reg				<= '0';	--problem
-			r_data_valid_reg 		<= '0';
-			r_length_reg     		<= (others => 'Z');
-			w_data_reg				<= (others => 'Z');
-			w_output_en_reg			<= '0';
-			w_buff_req_reg			<= '0';
-			w_ready_reg				<= '0'; 	--problem
-			w_done_reg 				<= '0';
-			current_operation_reg 	<= NOP_OP;
-			address_buff_reg		<= (others => 'Z');
-			timer_ref_reg      		<= to_unsigned(0, timer_ref_next'length);
-			timer_write_reg     	<= '0';
-			timer_read_reg      	<= '0';
-			cas_counter_reg			<= to_unsigned(0, cas_counter_reg'length);
-			ref_counter_reg			<= to_unsigned(0, ref_counter_reg'length);
-			init_state_reg			<= INIT_WAIT_STATE;
-			init_cmd_reg			<= (others => 'Z');
-			init_addr_reg			<= (others => '1');
-			init_counter_reg		<= to_unsigned(0, init_counter_reg'length);
-			init_done_reg			<= '0';
-			-- <= (others => '0');
-		elsif (clock = '1' and clock'event) then
-			-- Central FSM Registers update
-			state_reg				<= state_next;
-			bank_reg				<= bank_next;
-			address_reg 			<= address_next;
-			cmd_reg					<= cmd_next;
-			r_buff_req_reg			<= r_buff_req_next;
-			r_data_reg				<= r_data_next;
-			r_ready_reg				<= r_ready_next;
-			r_data_valid_reg 		<= r_data_valid_next;
-			r_length_reg     		<= r_length_next;
-			w_buff_req_reg			<= w_buff_req_next;
-			w_ready_reg				<= w_ready_next;
-			w_done_reg				<= w_done_next;
-			w_data_reg				<= w_data_next;
-			w_output_en_reg			<= w_output_en_next;
-			current_operation_reg	<= current_operation_next;
-			address_buff_reg		<= address_buff_next;
-			timer_ref_reg      		<= timer_ref_next;
-			timer_write_reg     	<= timer_write_next;
-			timer_read_reg      	<= timer_read_next;
-			cas_counter_reg			<= cas_counter_next;
-			ref_counter_reg			<= ref_counter_next;
-			-- Init FSM Registers update
-			init_state_reg			<= init_state_next;
-			init_cmd_reg			<= init_cmd_next;
-			init_addr_reg			<= init_addr_next;
-			init_counter_reg		<= init_counter_next;
-			init_done_reg			<= init_done_next;
+		if (clock = '1' and clock'event) then
+			if (reset = '1') then
+				-- Reset registers' state
+				state_reg				<= IDLE_STATE;
+				bank_reg				<= (others => 'Z');
+				address_reg 			<= (others => 'Z');
+				cmd_reg					<= (others => 'Z'); -- could be a problem
+				r_data_reg				<= (others => 'Z');
+				r_buff_req_reg			<= '0';
+				r_ready_reg				<= '0';	--problem
+				r_data_valid_reg 		<= '0';
+				r_length_reg     		<= (others => 'Z');
+				w_data_reg				<= (others => 'Z');
+				w_output_en_reg			<= '0';
+				w_buff_req_reg			<= '0';
+				w_ready_reg				<= '0'; 	--problem
+				w_done_reg 				<= '0';
+				current_operation_reg 	<= NOP_OP;
+				address_buff_reg		<= (others => 'Z');
+				timer_ref_reg      		<= to_unsigned(0, timer_ref_next'length);
+				timer_write_reg     	<= '0';
+				timer_read_reg      	<= '0';
+				cas_counter_reg			<= to_unsigned(0, cas_counter_reg'length);
+				ref_counter_reg			<= to_unsigned(0, ref_counter_reg'length);
+				init_state_reg			<= INIT_WAIT_STATE;
+				init_cmd_reg			<= (others => 'Z');
+				init_addr_reg			<= (others => '1');
+				init_counter_reg		<= to_unsigned(0, init_counter_reg'length);
+				init_done_reg			<= '0';
+			else
+				-- Central FSM Registers update
+				state_reg				<= state_next;
+				bank_reg				<= bank_next;
+				address_reg 			<= address_next;
+				cmd_reg					<= cmd_next;
+				r_buff_req_reg			<= r_buff_req_next;
+				r_data_reg				<= r_data_next;
+				r_ready_reg				<= r_ready_next;
+				r_data_valid_reg 		<= r_data_valid_next;
+				r_length_reg     		<= r_length_next;
+				w_buff_req_reg			<= w_buff_req_next;
+				w_ready_reg				<= w_ready_next;
+				w_done_reg				<= w_done_next;
+				w_data_reg				<= w_data_next;
+				w_output_en_reg			<= w_output_en_next;
+				current_operation_reg	<= current_operation_next;
+				address_buff_reg		<= address_buff_next;
+				timer_ref_reg      		<= timer_ref_next;
+				timer_write_reg     	<= timer_write_next;
+				timer_read_reg      	<= timer_read_next;
+				cas_counter_reg			<= cas_counter_next;
+				ref_counter_reg			<= ref_counter_next;
+				-- Init FSM Registers update
+				init_state_reg			<= init_state_next;
+				init_cmd_reg			<= init_cmd_next;
+				init_addr_reg			<= init_addr_next;
+				init_counter_reg		<= init_counter_next;
+				init_done_reg			<= init_done_next;
+			end if;
 		end if;
 	end process;
 

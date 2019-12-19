@@ -19,21 +19,20 @@ entity spi_fifo is
 		mem_write_req		: out std_logic;
 		mem_write_address	: out std_logic_vector(23 downto 0);
 		mem_write_data		: out std_logic_vector(15 downto 0)
-		-- Debug port
-		;debug_spi : out std_logic_vector(3 downto 0)
 	);
 end entity;
 
 architecture bhv of spi_fifo is
-	type buffer_type is array(0 to 400) of std_logic_vector(15 downto 0);
+	-- at least double of 128 (discharging time <= recharging time)
+	type buffer_type is array(0 to 300) of std_logic_vector(15 downto 0); 
 	signal buffer_s: buffer_type := (others => (others => '0'));
 	signal discharge_buffer_s	: std_logic := '0';
 	-- Fifo write signals
-	signal first_index_s 		: integer range 0 to 400 := 0;--(8 downto 0) := 0;
-	signal last_index_s 		: integer range 0 to 400 := 0;--(8 downto 0) := 0;
-	signal element_counter_s 	: unsigned(8 downto 0) := to_unsigned(0, 9);
+	signal first_index_s 		: integer range 0 to 300 := 0;
+	signal last_index_s 		: integer range 0 to 300 := 0;
+	signal element_counter_s 	: unsigned(9 downto 0) := to_unsigned(0, 10);
 	-- Fifo read signals
-	type state_type is (WAIT_STATE, INIT_STATE, PREPARATION_STATE, ELABORATION_STATE, DISCHARGE_STATE, WRITE_REQ_STATE);
+	type state_type is (WAIT_STATE, INIT_STATE, PREPARATION_STATE, ELABORATION_STATE, DISCHARGE_STATE, WRITE_REQ_STATE, WRITE_WAIT);
 	signal state_reg, state_next: state_type := WAIT_STATE; 
 	signal discharge_counter_reg, discharge_counter_next	: unsigned(8 downto 0) := to_unsigned(0, 9);
 	signal tot_discharge_counter_reg, tot_discharge_counter_next : unsigned(8 downto 0) := to_unsigned(0, 9);
@@ -61,63 +60,66 @@ begin
 	--mem_write_data		<= fifo_r_data;
 	mem_write_req		<= mem_write_req_s;
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			first_index_s			<= 0;
-			last_index_s			<= 0;
-			element_counter_s	 	<= to_unsigned(0, element_counter_s'length);
-		elsif (clock = '1' and clock'event) then
-			-- Fifo loading process
-			if (fifo_w_req = '1') then
-				buffer_s(last_index_s) <= fifo_w_data;
-				last_index_s <= last_index_s + 1;
-				element_counter_s <= element_counter_s + 1;
-				if (last_index_s = 400) then
-					last_index_s <= 0;
+		if (clock = '1' and clock'event) then
+			if (reset = '1') then
+				first_index_s			<= 0;
+				last_index_s			<= 0;
+				element_counter_s	 	<= to_unsigned(0, element_counter_s'length);
+			else
+				-- Fifo loading process
+				if (fifo_w_req = '1') then
+					buffer_s(last_index_s) <= fifo_w_data;
+					last_index_s <= last_index_s + 1;
+					element_counter_s <= element_counter_s + 1;
+					if (last_index_s = 300) then 
+						last_index_s <= 0;
+					end if;
 				end if;
-			end if;
-			if (fifo_r_req = '1') then
-				element_counter_s <= element_counter_s - 1;
-				first_index_s <= first_index_s + 1;
-				if (first_index_s = 400) then
-					first_index_s <= 0;
+				if (fifo_r_req = '1') then
+					element_counter_s <= element_counter_s - 1;
+					first_index_s <= first_index_s + 1;
+					if (first_index_s = 300) then 
+						first_index_s <= 0;
+					end if;
 				end if;
-			end if;
-			-- Update element counter
-			if (fifo_w_req = '1' and fifo_r_req = '1') then
-				element_counter_s <= element_counter_s;
+				-- Update element counter
+				if (fifo_w_req = '1' and fifo_r_req = '1') then
+					element_counter_s <= element_counter_s;
+				end if;
 			end if;
 		end if;
 	end process;
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			state_reg				<= WAIT_STATE;
-			transfer_counter_reg	<= (others => '0');
-			discharge_counter_reg	<= (others => '0');
-			memory_address_reg		<= (others => '0');
-			preparation_counter_reg <= (others => '0');
-			
-			elaboration_buffer_reg	<= (others => (others => '0'));
-			preparation_buffer_reg	<= (others => (others => '0'));
-			tot_discharge_counter_reg <= (others => '0');
+		if (clock = '1' and clock'event) then
+			if (reset = '1') then
+				state_reg				<= WAIT_STATE;
+				transfer_counter_reg	<= (others => '0');
+				discharge_counter_reg	<= (others => '0');
+				memory_address_reg		<= (others => '0');
+				preparation_counter_reg <= (others => '0');
+				
+				elaboration_buffer_reg	<= (others => (others => '0'));
+				preparation_buffer_reg	<= (others => (others => '0'));
+				tot_discharge_counter_reg <= (others => '0');
 
-			init_state_counter_reg	<= (others => '0');
+				init_state_counter_reg	<= (others => '0');
+			else
+				state_reg				<= state_next;
+				transfer_counter_reg	<= transfer_counter_next;
+				discharge_counter_reg	<= discharge_counter_next;
+				memory_address_reg		<= memory_address_next;
+				preparation_counter_reg <= preparation_counter_next;
 
-		elsif (clock = '1' and clock'event) then
-			state_reg				<= state_next;
-			transfer_counter_reg	<= transfer_counter_next;
-			discharge_counter_reg	<= discharge_counter_next;
-			memory_address_reg		<= memory_address_next;
-			preparation_counter_reg <= preparation_counter_next;
+				elaboration_buffer_reg	<= elaboration_buffer_next;
+				preparation_buffer_reg	<= preparation_buffer_next;			
+				tot_discharge_counter_reg <= tot_discharge_counter_next;
 
-			elaboration_buffer_reg	<= elaboration_buffer_next;
-			preparation_buffer_reg	<= preparation_buffer_next;			
-			tot_discharge_counter_reg <= tot_discharge_counter_next;
-
-			init_state_counter_reg	<= init_state_counter_next;
+				init_state_counter_reg	<= init_state_counter_next;
+			end if;
 		end if;
 	end process;
 
@@ -142,12 +144,12 @@ begin
 		
 			when WAIT_STATE =>
 				-- 8 could be too small. it could give problems concerning reads from memory. Every multiple of 8 is fine.
-				if (element_counter_s >= 128) then -- 5 for debug. 128 for real cases
+				if (element_counter_s >= 8) then --128) then -- 5 for debug. 128 for real cases
 					state_next <= INIT_STATE;
 				end if;
 
 			when INIT_STATE => 
-				if (init_state_counter_reg = 16) then
+				if (init_state_counter_reg = 1) then --16) then
 					state_next <= WAIT_STATE;
 					init_state_counter_next <= (others => '0');
 				else
@@ -171,8 +173,8 @@ begin
 					state_next <= ELABORATION_STATE;
 				else
 					preparation_counter_next <= preparation_counter_reg + 1;
-					preparation_buffer_next( to_integer( preparation_counter_reg(2 downto 0) * 2 ) ) 	<= fifo_r_data(15 downto 8);
-					preparation_buffer_next( to_integer( preparation_counter_reg * 2 + 1 ) ) 			<= fifo_r_data(7 downto 0);
+					preparation_buffer_next( to_integer( preparation_counter_reg * 2 ) ) 		<= 	fifo_r_data(15 downto 8);
+					preparation_buffer_next( to_integer( preparation_counter_reg * 2 + 1 ) ) 	<= fifo_r_data(7 downto 0);
 					fifo_r_req <= '1';
 				end if;
 
@@ -188,15 +190,17 @@ begin
 				if (transfer_counter_reg = 8) then--128) then --for debug--128) then 
 					discharge_counter_next 	<= discharge_counter_reg + 1;
 					transfer_counter_next	<= (others => '0');
-					state_next				<= WAIT_STATE;
+					state_next				<= INIT_STATE;--WAIT_STATE;
 					memory_address_next 	<= memory_address_reg + 1;		
 				elsif (mem_write_ready = '1') then
 					mem_write_req_s		<= '1';
 					mem_write_address	<= std_logic_vector( unsigned(memory_address_reg) + (transfer_counter_reg * 8) ); 
 					mem_write_data		<= elaboration_buffer_reg( to_integer(transfer_counter_reg) );
-					state_next			<= WRITE_REQ_STATE;
-					debug_spi 			<= fifo_r_data(3 downto 0);
+					state_next			<= WRITE_WAIT;--WRITE_REQ_STATE;
 				end if;
+
+			when WRITE_WAIT => 
+				state_next <= WRITE_REQ_STATE;
 
 			when WRITE_REQ_STATE =>
 				if (mem_write_done = '1') then

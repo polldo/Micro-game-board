@@ -81,8 +81,7 @@ begin
 
 	VGA_CTRL: vga_controller port map
 	(
-		--clock	 		=> clock_vga, 
-		clock 			=> clock_memory,
+		clock	 		=> clock_vga, 
 		reset			=> reset,
 		v_sync 			=> v_sync_s,
 		h_sync 			=> h_sync_s, 
@@ -92,7 +91,6 @@ begin
 
 	VGA_DP: vga_datapath port map
 	(
-		--clock 			=> clock_vga,
 		clock 			=> clock_memory,
 		reset			=> reset,
 		display_enable 	=> disp_en_s, 

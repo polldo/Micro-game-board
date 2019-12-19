@@ -17,8 +17,6 @@ entity spi is
 		mem_write_req		: out std_logic;
 		mem_write_address	: out std_logic_vector(23 downto 0);
 		mem_write_data		: out std_logic_vector(15 downto 0)
-		-- Debug port
-		;debug_spi : out std_logic_vector(3 downto 0)
 	);
 end entity;
 
@@ -35,8 +33,6 @@ architecture struct of spi is
 			ack_received		: in std_logic;
 			data_received		: out std_logic_vector(15 downto 0);
 			transfer_complete	: out std_logic
-			-- Debug port
-			--;debug_spi : out std_logic_vector(3 downto 0)
 		);
 	end component;
 
@@ -52,8 +48,6 @@ architecture struct of spi is
 			-- Fifo port
 			fifo_w_req			: out std_logic;
 			fifo_w_data			: out std_logic_vector(15 downto 0)
-			-- Debug port
-			--;debug_spi : out std_logic_vector(3 downto 0)
 		);
 	end component;
 
@@ -74,8 +68,6 @@ architecture struct of spi is
 			mem_write_req		: out std_logic;
 			mem_write_address	: out std_logic_vector(23 downto 0);
 			mem_write_data		: out std_logic_vector(15 downto 0)
-			-- Debug port
-			;debug_spi : out std_logic_vector(3 downto 0)
 		);
 	end component;
 
@@ -101,7 +93,6 @@ begin
 		ack_received		 => ack_received_s,
 		data_received		 => data_received_s,
 		transfer_complete	 => transfer_complete_s
-		--,debug_spi			=> debug_spi
 	);
 
 	SPI_CONTROLLER_INST: spi_controller port map
@@ -113,7 +104,6 @@ begin
 		ack_received		=> ack_received_s,
 		fifo_w_req			=> fifo_w_req_s,
 		fifo_w_data			=> fifo_w_data_s
-		--,debug_spi			=> debug_spi
 	);
 
 	SPI_FIFO_INST: spi_fifo port map
@@ -127,7 +117,6 @@ begin
 		mem_write_req		=> mem_write_req,
 		mem_write_address	=> mem_write_address,
 		mem_write_data		=> mem_write_data
-		,debug_spi			=> debug_spi
 	);
 
 end architecture;

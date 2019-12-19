@@ -14,44 +14,41 @@ entity vga_controller is
 end entity;
 
 architecture bhv of vga_controller is
-	-- debug timings
---	constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(2, 11);
---	constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(4, 11);
---	constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(6, 11);
---	constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(8, 11);
---	constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(2, 11);
---	constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(4, 11);
---	constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(6, 11);
---	constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(8, 11);
-	-- real timings (640x480)
---	constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(640, 11);
---	constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(656, 11);
---	constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(752, 11);
---	constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(800, 11);
---	constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(480, 11);
---	constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(490, 11);
---	constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(492, 11);
---	constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(525, 11);
-	-- real timings (800x600)
-	--constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(800, 11);
-	--constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(856, 11);
-	--constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(976, 11);
-	--constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(1040, 11);
-	--constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(600, 11);
-	--constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(637, 11);
-	--constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(643, 11);
-	--constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(666, 11);
-	-- real timings (about 1280x960)
-	constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(1280, 11);
-	constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(1280 + 80, 11);
-	constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(1280 + 80 + 136, 11);
-	constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(1280 + 80 + 136 + 216, 11);
-	constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(960, 11);
-	constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(961, 11);
-	constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(964, 11);
-	constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(994, 11);
+	-- resolution 800x600
+	constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(800, 11);
+	constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(800 + 56, 11);
+	constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(800 + 56 + 120, 11);
+	constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(800 + 56 + 120 + 64, 11);
+	constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(600, 11);
+	constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(600 + 37, 11);
+	constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(600 + 37 + 6, 11);
+	constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(600 + 37 + 6 + 23, 11);
+	--constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(1280, 11);
+	--constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(1280 + 64, 11);
+	--constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(1280 + 64 + 136, 11);
+	--constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(1280 + 64 + 136 + 200, 11);
+	--constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(800, 11);
+	--constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(800 + 1, 11);
+	--constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(800 + 1 + 3, 11);
+	--constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(800 + 1 + 3 + 24, 11);
+	--constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(1280, 11);
+	--constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(1280 + 48, 11);
+	--constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(1280 + 48 + 112, 11);
+	--constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(1280 + 48 + 112 + 248, 11);
+	--constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(1024, 11);
+	--constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(1024 + 1, 11);
+	--constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(1024 + 1 + 3, 11);
+	--constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(1024 + 1 + 3 + 38, 11);
+	--constant H_F_PORCH : unsigned(10 downto 0) := to_unsigned(1280, 11);
+	--constant H_S_PULSE : unsigned(10 downto 0) := to_unsigned(1280 + 88, 11);
+	--constant H_B_PORCH : unsigned(10 downto 0) := to_unsigned(1280 + 88 + 136, 11);
+	--constant H_END_VAL : unsigned(10 downto 0) := to_unsigned(1280 + 88 + 136 + 224, 11);
+	--constant V_F_PORCH : unsigned(10 downto 0) := to_unsigned(960, 11);
+	--constant V_S_PULSE : unsigned(10 downto 0) := to_unsigned(960 + 1, 11);
+	--constant V_B_PORCH : unsigned(10 downto 0) := to_unsigned(960 + 1 + 3, 11);
+	--constant V_END_VAL : unsigned(10 downto 0) := to_unsigned(960 + 1 + 3 + 38, 11);
 	-- vga counter signals
-	signal h_val, v_val : unsigned(10 downto 0) := to_unsigned(1, 11);
+	signal h_val, v_val : unsigned(15 downto 0) := to_unsigned(0, 16);
 	--signal h_f_porch_s, h_s_pulse_s, h_b_porch_s : std_logic := '0';
 	--signal v_f_porch_s, v_s_pulse_s, v_b_porch_s : std_logic := '0';
 	signal h_s_pulse_s, v_s_pulse_s : std_logic := '0';
@@ -114,21 +111,24 @@ begin
 
 -------------------FSM END
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			h_val <= (others => '0');
-			v_val <= (others => '0');
-		elsif (clock = '1' and clock'event) then
-			h_val <= h_val + 1;
-			if (h_val = H_END_VAL - 1) then
+		if (clock = '1' and clock'event) then
+				
+			if (reset = '1') then
 				h_val <= (others => '0');
-				v_val <= v_val + 1;
-				if (v_val = V_END_VAL - 1) then
-					v_val <= (others => '0');
+				v_val <= (others => '0');
+			else
+				h_val <= h_val + 1;
+				if (h_val = H_END_VAL - 1) then
+					h_val <= (others => '0');
+					v_val <= v_val + 1;
+					if (v_val = V_END_VAL - 1) then
+						v_val <= (others => '0');
+					end if;
 				end if;
 			end if;
-	end if;
+		end if;
 	end process;
 
 	process(h_val, v_val)
@@ -151,17 +151,19 @@ begin
 		end if;
 	end process;
 
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			vga_init 			<= '0';
-			vga_init_counter 	<= (others => '0');
-		elsif (clock = '1' and clock'event) then
-			if (vga_init = '0') then
-				if (vga_init_counter >= 300) then
-					vga_init <= '1';
-				else
-					vga_init_counter <= vga_init_counter + 1;
+		if (clock = '1' and clock'event) then
+			if (reset = '1') then
+				vga_init 			<= '0';
+				vga_init_counter 	<= (others => '0');
+			else
+				if (vga_init = '0') then
+					if (vga_init_counter >= 300) then
+						vga_init <= '1';
+					else
+						vga_init_counter <= vga_init_counter + 1;
+					end if;
 				end if;
 			end if;
 		end if;
@@ -210,13 +212,14 @@ begin
 	--	end if;
 	--end process;
 
-	img_x_inscreen <= '1' when h_val >= 100 and h_val < 1124 else '0'; --228 else '0';--h_val >= 100 and h_val < 612 else '0';
-	img_y_inscreen <= '1' when v_val >= 100 and v_val < 612 else '0';--164 else '0';
+	img_x_inscreen <= '1' when h_val >= 100 and h_val < 612 else '0';--1124 else '0';--< --228 else '0';--h_val >= 100 and h_val < 612 else '0';
+	img_y_inscreen <= '1' when v_val >= 100 and v_val < 356 else '0';--612 else '0';--< --164 else '0';
 	----display_enable <= img_x_inscreen and img_y_inscreen and not (v_f_porch_s or v_s_pulse_s or v_b_porch_s or h_f_porch_s or h_s_pulse_s or h_b_porch_s);
 	--display_enable <= not (v_f_porch_s or v_s_pulse_s or v_b_porch_s or h_f_porch_s or h_s_pulse_s or h_b_porch_s);
 	display_enable 	<= (vga_init) and h_on and v_on and img_x_inscreen and img_y_inscreen;
 	new_page 		<= (vga_init) and not v_on;
 	v_sync 	<= (vga_init) and v_s_pulse_s;
-	h_sync 	<= (vga_init) and not h_s_pulse_s; -- <= h_s_pulse_s;
+	--h_sync 	<= (vga_init) and not h_s_pulse_s; 
+	h_sync 	<= (vga_init) and h_s_pulse_s; 
 
 end architecture;

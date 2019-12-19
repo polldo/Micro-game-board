@@ -30,50 +30,49 @@ architecture bhv of vga_datapath is
 begin
 
 	-- Pixel management processes
-	process(clock, reset)
+	process(clock)
 	begin
-		if (reset = '1') then
-			pixel_reg 			<= (others => '0');
-			pixel_counter_reg 	<= (others => '0');
-
-			zoom_counter_reg	<= (others => '0');
-		
-		elsif (clock = '1' and clock'event) then
-
-			display_enable_reg <= display_enable;
-
-			fifo_r_req 	<= '0';
-			--pixel_reg 	<= fifo_r_data;
-
-			if (display_enable = '1') then			
-				
-
-				zoom_counter_reg <= zoom_counter_reg + 1;
-				if (zoom_counter_reg = 0) then 
-
------------------------------
-					pixel_counter_reg 	<= pixel_counter_reg + 1;
-					if (pixel_counter_reg = 0) then
-						pixel_reg 			<= fifo_r_data;
-						fifo_r_req 	 		<= '1';
-					elsif (pixel_counter_reg = 15) then
-						pixel_counter_reg 	<= (others => '0');
-						pixel_reg 			<= pixel_reg(14 downto 0) & '0';
-					else
-						pixel_reg 			<= pixel_reg(14 downto 0) & '0';
-					end if;
-------------------------------
-
-				elsif (zoom_counter_reg = 7) then 
-					zoom_counter_reg <= (others => '0');
-				end if;
-
-			else
-				zoom_counter_reg 	<= (others => '0');
+		if (clock = '1' and clock'event) then
+			if (reset = '1') then
 				pixel_reg 			<= (others => '0');
 				pixel_counter_reg 	<= (others => '0');
-			end if;
 
+				zoom_counter_reg	<= (others => '0');
+			else
+				display_enable_reg <= display_enable;
+
+				fifo_r_req 	<= '0';
+				--pixel_reg 	<= fifo_r_data;
+
+				if (display_enable = '1') then			
+					
+
+					zoom_counter_reg <= zoom_counter_reg + 1;
+					if (zoom_counter_reg = 0) then 
+
+	-----------------------------
+						pixel_counter_reg 	<= pixel_counter_reg + 1;
+						if (pixel_counter_reg = 0) then
+							pixel_reg 			<= fifo_r_data;
+							fifo_r_req 	 		<= '1';
+						elsif (pixel_counter_reg = 15) then
+							pixel_counter_reg 	<= (others => '0');
+							pixel_reg 			<= pixel_reg(14 downto 0) & '0';
+						else
+							pixel_reg 			<= pixel_reg(14 downto 0) & '0';
+						end if;
+	------------------------------
+
+					elsif (zoom_counter_reg = 7) then 
+						zoom_counter_reg <= (others => '0');
+					end if;
+
+				else
+					zoom_counter_reg 	<= (others => '0');
+					pixel_reg 			<= (others => '0');
+					pixel_counter_reg 	<= (others => '0');
+				end if;
+			end if;
 		end if;
 	end process;
 		
