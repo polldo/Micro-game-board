@@ -10,7 +10,7 @@ entity vga is
 		reset				: in std_logic;
 		-- Vga port
 		v_sync, h_sync 		: out std_logic;
-		r_out, g_out, b_out	: out std_logic;
+		r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 		-- Memory port
 		read_req			: out std_logic;
 		read_address		: out std_logic_vector(23 downto 0);
@@ -41,7 +41,7 @@ architecture struct of vga is
 			reset				: in std_logic;
 			-- Vga interface
 			display_enable		: in std_logic;
-			r_out, g_out, b_out	: out std_logic;
+			r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 			-- Image buffer interface
 			fifo_r_data			: in std_logic_vector(15 downto 0);
 			fifo_r_req 			: out std_logic

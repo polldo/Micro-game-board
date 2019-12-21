@@ -9,7 +9,7 @@ entity vga_datapath is
 		reset				: in std_logic;
 		-- Vga interface
 		display_enable		: in std_logic;
-		r_out, g_out, b_out	: out std_logic;
+		r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 		-- Image buffer interface
 		fifo_r_data			: in std_logic_vector(15 downto 0);
 		fifo_r_req 			: out std_logic
@@ -17,7 +17,9 @@ entity vga_datapath is
 end entity;
 
 architecture bhv of vga_datapath is
-	signal r_s, g_s, b_s : std_logic;
+	signal r_s, g_s, b_s : std_logic_vector(2 downto 0);
+	signal color_vector : std_logic_vector(2 downto 0);
+	signal color_counter : unsigned(8 downto 0);
 	-- Pixel register signals
 	signal pixel_reg, pixel_next : std_logic_vector(15 downto 0) := (others => '0');
 	signal pixel_counter_reg, pixel_counter_next : unsigned(3 downto 0) := (others => '0');
@@ -75,13 +77,27 @@ begin
 			end if;
 		end if;
 	end process;
-		
-	r_s <= pixel_reg(15);
-	g_s <= pixel_reg(15);
-	b_s <= pixel_reg(15);-- xor pixel_in(3);
 
-	r_out <= r_s when (display_enable_reg = '1') else '0';
-	g_out <= g_s when (display_enable_reg = '1') else '0';
-	b_out <= b_s when (display_enable_reg = '1') else '0';
+	process(clock)
+	begin
+		if (clock = '1' and clock'event) then
+			if (display_enable_reg = '1' and display_enable = '0' ) then
+				if (color_counter = 8) then
+					color_counter <= to_unsigned(1, color_counter'length);
+				else
+					color_counter <= color_counter + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+	color_vector <= std_logic_vector(color_counter(2 downto 0));
+		
+	r_s <= color_vector when pixel_reg(15) = '1' else "000";
+	g_s <= color_vector when pixel_reg(15) = '1' else "000";
+	b_s <= color_vector when pixel_reg(15) = '1' else "000";
+
+	r_out <= r_s when (display_enable_reg = '1') else "000";
+	g_out <= g_s when (display_enable_reg = '1') else "000";
+	b_out <= b_s when (display_enable_reg = '1') else "000";
 
 end architecture;

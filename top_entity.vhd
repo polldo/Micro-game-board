@@ -8,7 +8,7 @@ entity top_entity is
 		clock, reset_n 			: in std_logic;
 		-- VGA signals
 		vga_v_sync, vga_h_sync		: out std_logic;
-		vga_r_out, vga_g_out, vga_b_out	: out std_logic;
+		vga_r_out, vga_g_out, vga_b_out	: out std_logic_vector(2 downto 0);
 		-- SDRAM signals
 		sdram_clock			: out std_logic;
 		sdram_data			: inout std_logic_vector(15 downto 0);
@@ -80,7 +80,7 @@ architecture struct of top_entity is
 			reset				: in std_logic;
 			-- Vga port
 			v_sync, h_sync 		: out std_logic;
-			r_out, g_out, b_out	: out std_logic;
+			r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 			-- Memory port
 			read_req			: out std_logic;
 			read_address		: out std_logic_vector(23 downto 0);
