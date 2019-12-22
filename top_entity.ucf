@@ -1,0 +1,73 @@
+NET "clock" LOC = "P184";
+NET "reset_n" LOC = "P101";
+
+#NET "led_out[0]" 		LOC = "P68";
+#NET "led_out[1]" 		LOC = "P78";
+#NET "led_out[2]" 		LOC = "P83" ;
+#net "button_in"	LOC = "P115"; #press button
+#NET "button_in" PULLUP;
+
+NET "sdram_address[5]"  LOC = "p9";
+NET "sdram_address[4]"  LOC = "p8";
+NET "sdram_address[7]"  LOC = "p12";
+NET "sdram_address[6]"  LOC = "p11";
+NET "sdram_address[9]"  LOC = "p16";
+NET "sdram_address[8]"  LOC = "p15";
+NET "sdram_address[12]"  LOC = "p19";
+NET "sdram_address[11]"  LOC = "P18";
+NET "sdram_clock" LOC = "P23"; 
+NET "sdram_cke"  LOC ="p22" ;
+NET "sdram_data[8]"  LOC = "p25";
+NET "sdram_umqm"  LOC = "p24"; 
+NET "sdram_data[10]"  LOC = "p29";
+NET "sdram_data[9]"  LOC = "p28";
+NET "sdram_data[12]"  LOC = "p31";
+NET "sdram_data[11]"  LOC = "p30";
+NET "sdram_data[14]"  LOC = "p34";
+NET "sdram_data[13]"  LOC ="p33" ;
+# NET "SDRAM_L_21"      NC
+NET "sdram_data[15]"  LOC ="p35" ;
+#SDRAM_R
+#NET "SDRAM_R_1"  LOC ="3.3V" ;
+#NET "SDRAM_R_2"  LOC ="GND" ;
+NET "sdram_address[3]"  LOC = "p153";
+NET "sdram_address[2]"  LOC = "p160";
+NET "sdram_address[1]"  LOC = "p151";
+NET "sdram_address[0]"  LOC = "p152";
+NET "sdram_address[10]"  LOC = "p147";
+NET "sdram_bank[1]"  LOC = "p150";
+NET "sdram_bank[0]"  LOC = "p145";
+NET "sdram_cs_n"  LOC = "P146";
+NET "sdram_ras_n"  LOC = "p140";
+NET "sdram_cas_n"  LOC ="p144" ;
+NET "sdram_we_n"  LOC = "p138";
+NET "sdram_ldqm"  LOC = "p139";
+NET "sdram_data[7]"  LOC = "p135";
+NET "sdram_data[6]"  LOC = "p137";
+NET "sdram_data[5]"  LOC = "p133";
+NET "sdram_data[4]"  LOC = "p134";
+NET "sdram_data[3]"  LOC = "p129";
+NET "sdram_data[2]"  LOC ="p132" ;
+NET "sdram_data[1]"  LOC ="p127" ;
+NET "sdram_data[0]"  LOC ="p128" ;
+
+#8I/Os_1
+NET "spi_enable"  LOC = "p75"; #8I/Os_1_1
+NET "spi_clock"  LOC = "p76"; #8I/Os_1_2
+NET "spi_data"  LOC = "p69"; #8I/Os_1_3
+
+# Vga signals
+NET "vga_v_sync" 	LOC = "p61"; #32I/Os_1_1
+NET "vga_h_sync" 	LOC = "p60"; #32I/Os_1_2
+NET "vga_r_out[0]" 	LOC = "p55"; #32I/Os_1_3
+NET "vga_r_out[1]" 	LOC = "p50"; #32I/Os_1_4
+NET "vga_r_out[2]" 	LOC = "p49"; #32I/Os_1_5
+NET "vga_g_out[0]" 	LOC = "p48"; #32I/Os_1_6
+NET "vga_g_out[1]" 	LOC = "p47"; #32I/Os_1_7
+NET "vga_g_out[2]" 	LOC = "p45"; #32I/Os_1_8
+NET "vga_b_out[0]" 	LOC = "p42"; #32I/Os_1_9
+NET "vga_b_out[1]" 	LOC = "p41"; #32I/Os_1_10
+NET "vga_b_out[2]" 	LOC = "p40"; #32I/Os_1_11
+
+NET "clock" TNM_NET = clock;
+TIMESPEC TS_clock = PERIOD "clock" 20 ns HIGH 50%;
