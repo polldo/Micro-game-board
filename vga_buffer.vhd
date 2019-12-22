@@ -33,7 +33,7 @@ architecture bhv of vga_buffer is
 	signal last_index_s 		: integer range 0 to 200 := 0;
 	signal element_counter_s 	: unsigned(8 downto 0) := to_unsigned(0, 9);
 	-- Buffer filler signals
-	type state_type is (WAIT_STATE, READ_STATE, READ_WAIT_STATE);
+	type state_type is (WAIT_STATE, READ_STATE, READ_REQ_WAIT_STATE, READ_WAIT_STATE);
 	signal state_reg, state_next: state_type := WAIT_STATE; 
 	signal read_address_reg, read_address_next			: std_logic_vector(23 downto 0) := (others => '0');
 	signal read_save_count_reg, read_save_count_next	: unsigned(3 downto 0) := to_unsigned(0, 4);
@@ -135,6 +135,9 @@ begin
 					read_length 			<= std_logic_vector(to_unsigned(8, read_length'length));
 					state_next				<= READ_WAIT_STATE;
 				end if; 
+
+			when READ_REQ_WAIT_STATE =>
+				state_next <= READ_WAIT_STATE;
 				
 			when READ_WAIT_STATE =>
 				if (read_data_valid = '1') then

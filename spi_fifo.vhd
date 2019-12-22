@@ -10,9 +10,6 @@ entity spi_fifo is
 		-- Fifo write port  
 		fifo_w_req			: in std_logic;
 		fifo_w_data			: in std_logic_vector(15 downto 0);
-		-- Fifo read port
-		--fifo_r_req			: in std_logic;
-		--fifo_r_data			: out std_logic_vector(15 downto 0);
 		-- Fifo to Memory write port
 		mem_write_ready		: in std_logic;
 		mem_write_done		: in std_logic;
@@ -24,12 +21,12 @@ end entity;
 
 architecture bhv of spi_fifo is
 	-- at least double of 128 (discharging time <= recharging time)
-	type buffer_type is array(0 to 300) of std_logic_vector(15 downto 0); 
+	type buffer_type is array(0 to 150) of std_logic_vector(15 downto 0); 
 	signal buffer_s: buffer_type := (others => (others => '0'));
 	signal discharge_buffer_s	: std_logic := '0';
 	-- Fifo write signals
-	signal first_index_s 		: integer range 0 to 300 := 0;
-	signal last_index_s 		: integer range 0 to 300 := 0;
+	signal first_index_s 		: integer range 0 to 150 := 0;
+	signal last_index_s 		: integer range 0 to 150 := 0;
 	signal element_counter_s 	: unsigned(9 downto 0) := to_unsigned(0, 10);
 	-- Fifo read signals
 	type state_type is (WAIT_STATE, INIT_STATE, PREPARATION_STATE, ELABORATION_STATE, DISCHARGE_STATE, WRITE_REQ_STATE, WRITE_WAIT);
@@ -56,8 +53,6 @@ architecture bhv of spi_fifo is
 begin
 
 	fifo_r_data <= buffer_s(first_index_s);
-	--mem_write_address	<= std_logic_vector(memory_address_reg);
-	--mem_write_data		<= fifo_r_data;
 	mem_write_req		<= mem_write_req_s;
 
 	process(clock)
@@ -73,14 +68,14 @@ begin
 					buffer_s(last_index_s) <= fifo_w_data;
 					last_index_s <= last_index_s + 1;
 					element_counter_s <= element_counter_s + 1;
-					if (last_index_s = 300) then 
+					if (last_index_s = 150) then 
 						last_index_s <= 0;
 					end if;
 				end if;
 				if (fifo_r_req = '1') then
 					element_counter_s <= element_counter_s - 1;
 					first_index_s <= first_index_s + 1;
-					if (first_index_s = 300) then 
+					if (first_index_s = 150) then 
 						first_index_s <= 0;
 					end if;
 				end if;
@@ -143,13 +138,12 @@ begin
 		case state_reg is
 		
 			when WAIT_STATE =>
-				-- 8 could be too small. it could give problems concerning reads from memory. Every multiple of 8 is fine.
-				if (element_counter_s >= 8) then --128) then -- 5 for debug. 128 for real cases
+				if (element_counter_s >= 8) then 
 					state_next <= INIT_STATE;
 				end if;
 
 			when INIT_STATE => 
-				if (init_state_counter_reg = 1) then --16) then
+				if (init_state_counter_reg = 1) then
 					state_next <= WAIT_STATE;
 					init_state_counter_next <= (others => '0');
 				else
@@ -212,46 +206,5 @@ begin
 
 		end case;
 	end process;
-
-
-	--	if (reset = '1') then
-	--		discharge_counter_s		<= to_unsigned(0, discharge_counter_s'length);
-	--		transfer_counter_s 		<= to_unsigned(0, transfer_counter_s'length);
-	--		memory_address_s		<= to_unsigned(0, memory_address_s'length);
-	--		fifo_r_req				<= '0';
-	--		memory_req_done_s		<= '0';
-	--		mem_write_req_s			<= '0';
-	--	elsif (clock = '1' and clock'event) then
-	--		-- Fifo discharging process
-	--		if (element_counter_s = 5) then -- 5 for debug. 128 for real cases
-	--			discharge_buffer_s <= '1';
-	--		end if;
-	--		if (discharge_counter_s = 3) then--64) then
-	--			memory_address_s 	<= (others => '0');
-	--			discharge_counter_s <= (others => '0');
-	--		end if;
-	--		if (discharge_buffer_s = '1') then
-	--			if (memory_req_done_s = '1') then
-	--				mem_write_req_s <= '0';
-	--				if (mem_write_done = '1') then
-	--					fifo_r_req			<= '1';
-	--					memory_address_s 	<= memory_address_s + 1;
-	--					memory_req_done_s 	<= '0';
-	--					if (transfer_counter_s = 4) then --for debug--127) then 
-	--						discharge_buffer_s 	<= '0';
-	--						transfer_counter_s 	<= (others => '0');
-	--						discharge_counter_s <= discharge_counter_s + 1;
-	--					end if;
-	--					transfer_counter_s <= transfer_counter_s + 1;
-	--				end if;
-	--			else
-	--				if (mem_write_ready = '1') then
-	--					mem_write_req_s		<= '1';
-	--					memory_req_done_s	<= '1';
-	--				end if;
-	--			end if;
-	--		end if;
-	--	end if;
-	--end process;
 
 end architecture;

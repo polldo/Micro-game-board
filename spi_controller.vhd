@@ -10,18 +10,24 @@ entity spi_controller is
 		-- Spi port
 		data_received		: in std_logic_vector(15 downto 0);
 		transfer_complete	: in std_logic;
-		ack_received		: out std_logic;
 		-- Fifo port
 		fifo_w_req			: out std_logic;
 		fifo_w_data			: out std_logic_vector(15 downto 0)
-		-- Debug port
-		--;debug_spi : out std_logic_vector(3 downto 0)
-
 	);
 end entity;
 
 architecture rtl of spi_controller is
---	-- Configuration memory
+
+	-- CONTROLLER control logic
+	type state_type is (FETCH_STATE, DECODE_STATE, --CONFIG_FETCH_STATE, CONFIG_WRITE_STATE,  
+						IMAGE_FETCH_STATE, IMAGE_WRITE_STATE);
+	signal state_reg, state_next: state_type := FETCH_STATE; 
+	signal fifo_w_req_s 							: std_logic := '0';
+	signal fifo_w_data_s 							: std_logic_vector(15 downto 0) := (others => '0');
+	signal cmd_reg, cmd_next 						: std_logic_vector(15 downto 0);
+	signal image_counter_reg, image_counter_next	: unsigned(15 downto 0) := (others => '0');
+
+--	-- Configuration memory   NOT implemented yet
 --	constant HORIZ_SIZE_REG		: integer := 0;
 --	constant VERT_SIZE_REG		: integer := 0;
 --	constant HORIZ_OFFSET_REG	: integer := 0;
@@ -43,25 +49,10 @@ architecture rtl of spi_controller is
 	-- fsm states: idle, decode, receive, end transaction
 	--signal byte_counter : unsigned(15 downto 0);
 
-	-- CONTROLLER control logic
-	type state_type is (FETCH_STATE, DECODE_STATE, --CONFIG_FETCH_STATE, CONFIG_WRITE_STATE,  
-						IMAGE_FETCH_STATE, IMAGE_WRITE_STATE);
-	signal state_reg, state_next: state_type := FETCH_STATE; 
-	signal fifo_w_req_s 							: std_logic := '0';
-	signal fifo_w_data_s 							: std_logic_vector(15 downto 0) := (others => '0');
-	signal ack_received_s							: std_logic := '0';
-	signal cmd_reg, cmd_next 						: std_logic_vector(15 downto 0);
-	signal image_counter_reg, image_counter_next	: unsigned(15 downto 0) := (others => '0');
-
-
-	--signal debug_spi_reg, debug_spi_next : std_logic_vector(3 downto 0);
 begin
 
-	ack_received 	<= ack_received_s;
 	fifo_w_req 		<= fifo_w_req_s;
 	fifo_w_data 	<= fifo_w_data_s;
-
-	--debug_spi <= debug_spi_reg;
 
 	process(clock)
 	begin
@@ -74,8 +65,6 @@ begin
 				state_reg			<= state_next;
 				cmd_reg				<= cmd_next;
 				image_counter_reg	<= image_counter_next;
-
-				--debug_spi_reg <= debug_spi_next;
 			end if;
 		end if;
 	end process;
@@ -85,21 +74,17 @@ begin
 		state_next			<= state_reg;
 		cmd_next 			<= cmd_reg;
 		image_counter_next	<= image_counter_reg;
-		ack_received_s 		<= '0';
 		fifo_w_req_s 		<= '0';
 		fifo_w_data_s		<= (others => '0');
-
-		--debug_spi_next <= debug_spi_reg;
-
 		case state_reg is
 
 			when FETCH_STATE => 
 				if (transfer_complete = '1') then
 					cmd_next 	<= data_received;
 					state_next 	<= DECODE_STATE;
-					ack_received_s <= '1';
 				end if;
 
+			-- This will be useful when a configuration memory will be implemented
 			when DECODE_STATE => 
 				if (cmd_reg = "0000000000000001") then
 					state_next <= IMAGE_FETCH_STATE;
@@ -111,12 +96,8 @@ begin
 				if (transfer_complete = '1') then
 					fifo_w_req_s		<= '1';
 					fifo_w_data_s		<= data_received;
-					ack_received_s		<= '1';
 					state_next 			<= IMAGE_WRITE_STATE;
 					image_counter_next 	<= image_counter_reg + 1;
-
-					--debug_spi <= data_received(3 downto 0);
-					--debug_spi_next <= data_received(3 downto 0);
 				end if;
 
 			when IMAGE_WRITE_STATE => 

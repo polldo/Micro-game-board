@@ -30,7 +30,6 @@ architecture struct of spi is
 			spi_enable			: in std_logic;
 			spi_clock			: in std_logic;
 			spi_data			: in std_logic;
-			ack_received		: in std_logic;
 			data_received		: out std_logic_vector(15 downto 0);
 			transfer_complete	: out std_logic
 		);
@@ -44,7 +43,6 @@ architecture struct of spi is
 			-- Spi port
 			data_received		: in std_logic_vector(15 downto 0);
 			transfer_complete	: in std_logic;
-			ack_received		: out std_logic;
 			-- Fifo port
 			fifo_w_req			: out std_logic;
 			fifo_w_data			: out std_logic_vector(15 downto 0)
@@ -59,9 +57,6 @@ architecture struct of spi is
 			-- Fifo write port  
 			fifo_w_req			: in std_logic;
 			fifo_w_data			: in std_logic_vector(15 downto 0);
-			-- Fifo read port
-			--fifo_r_req			: in std_logic;
-			--fifo_r_data			: out std_logic_vector(15 downto 0);
 			-- Fifo to Memory write port
 			mem_write_ready		: in std_logic;
 			mem_write_done		: in std_logic;
@@ -71,16 +66,10 @@ architecture struct of spi is
 		);
 	end component;
 
-	signal ack_received_s 		: std_logic;
 	signal data_received_s		: std_logic_vector(15 downto 0);
 	signal transfer_complete_s	: std_logic;
 	signal fifo_w_req_s			: std_logic;
 	signal fifo_w_data_s		: std_logic_vector(15 downto 0);
-	--signal mem_write_ready_s	: std_logic;
-	--signal mem_write_done_s		: std_logic;
-	--signal mem_write_req_s		: std_logic;
-	--signal mem_write_address_s	: std_logic_vector(23 downto 0);
-	--signal mem_write_data_s		: std_logic_vector(15 downto 0);
 begin
 
 	SPI_RECEIVER_INST: spi_rx port map 
@@ -90,7 +79,6 @@ begin
 		spi_enable			 => spi_enable,
 		spi_clock			 => spi_clock,
 		spi_data			 => spi_data,
-		ack_received		 => ack_received_s,
 		data_received		 => data_received_s,
 		transfer_complete	 => transfer_complete_s
 	);
@@ -101,7 +89,6 @@ begin
 		reset				=> reset,
 		data_received		=> data_received_s,
 		transfer_complete	=> transfer_complete_s,
-		ack_received		=> ack_received_s,
 		fifo_w_req			=> fifo_w_req_s,
 		fifo_w_data			=> fifo_w_data_s
 	);

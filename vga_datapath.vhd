@@ -23,12 +23,10 @@ architecture bhv of vga_datapath is
 	-- Pixel register signals
 	signal pixel_reg, pixel_next : std_logic_vector(15 downto 0) := (others => '0');
 	signal pixel_counter_reg, pixel_counter_next : unsigned(3 downto 0) := (others => '0');
-
+	-- Zoom counter register is used to replicate each bit of the pixel register for a given number of time
 	signal zoom_counter_reg : unsigned(3 downto 0) := (others => '0');
-
+	-- Display enable is registered in order to synchronize combinational and sequential processes using it
 	signal display_enable_reg : std_logic := '0';
-
-	--signal pixel_debug : std_logic_vector(15 downto 0) := "0000000010000000";
 begin
 
 	-- Pixel management processes
@@ -38,21 +36,13 @@ begin
 			if (reset = '1') then
 				pixel_reg 			<= (others => '0');
 				pixel_counter_reg 	<= (others => '0');
-
 				zoom_counter_reg	<= (others => '0');
 			else
 				display_enable_reg <= display_enable;
-
 				fifo_r_req 	<= '0';
-				--pixel_reg 	<= fifo_r_data;
-
 				if (display_enable = '1') then			
-					
-
 					zoom_counter_reg <= zoom_counter_reg + 1;
 					if (zoom_counter_reg = 0) then 
-
-	-----------------------------
 						pixel_counter_reg 	<= pixel_counter_reg + 1;
 						if (pixel_counter_reg = 0) then
 							pixel_reg 			<= fifo_r_data;
@@ -63,12 +53,9 @@ begin
 						else
 							pixel_reg 			<= pixel_reg(14 downto 0) & '0';
 						end if;
-	------------------------------
-
 					elsif (zoom_counter_reg = 7) then 
 						zoom_counter_reg <= (others => '0');
 					end if;
-
 				else
 					zoom_counter_reg 	<= (others => '0');
 					pixel_reg 			<= (others => '0');
@@ -78,6 +65,7 @@ begin
 		end if;
 	end process;
 
+	-- Gives a different color shade to each row of the display 
 	process(clock)
 	begin
 		if (clock = '1' and clock'event) then
