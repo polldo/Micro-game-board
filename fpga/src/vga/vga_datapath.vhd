@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+--  Author: Paolo Calao
+--  Alias: Poldo
+--	Github link: https://github.com/Polldo
+--------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -9,6 +15,7 @@ entity vga_datapath is
 		reset				: in std_logic;
 		-- Vga interface
 		display_enable		: in std_logic;
+		new_page			: in std_logic;
 		r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 		-- Image buffer interface
 		fifo_r_data			: in std_logic_vector(15 downto 0);
@@ -70,15 +77,22 @@ begin
 	begin
 		if (clock = '1' and clock'event) then
 			if (display_enable_reg = '1' and display_enable = '0' ) then
-				if (color_counter = 8) then
+				if (color_counter = 64) then
 					color_counter <= to_unsigned(1, color_counter'length);
+					color_vector <= std_logic_vector( unsigned(color_vector) + 1 );
+					if (color_vector = "111") then
+						color_vector <= "001";
+					end if;
 				else
 					color_counter <= color_counter + 1;
 				end if;
 			end if;
+			if (new_page = '1') then
+				color_vector <= "001";
+			end if;
 		end if;
 	end process;
-	color_vector <= std_logic_vector(color_counter(2 downto 0));
+	--color_vector <= std_logic_vector(color_counter(2 downto 0));
 		
 	r_s <= color_vector when pixel_reg(15) = '1' else "000";
 	g_s <= color_vector when pixel_reg(15) = '1' else "000";

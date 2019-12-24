@@ -1,30 +1,9 @@
 --------------------------------------------------------------------------------
--- Company: 
--- Engineer:
---
--- Create Date:   15:25:06 12/06/2019
--- Design Name:   
--- Module Name:   C:/Users/Poldo/Documents/uni/polito/Electronics_Embedded_Sys/project/XILINX_PROJECT/src/image_processor/top_spi_tb.vhd
--- Project Name:  image_processor
--- Target Device:  
--- Tool versions:  
--- Description:   
--- 
--- VHDL Test Bench Created by ISE for module: top_entity
--- 
--- Dependencies:
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
---
--- Notes: 
--- This testbench has been automatically generated using types std_logic and
--- std_logic_vector for the ports of the unit under test.  Xilinx recommends
--- that these types always be used for the top-level I/O of a design in order
--- to guarantee that the testbench will bind correctly to the post-implementation 
--- simulation model.
+--  Author: Paolo Calao
+--  Alias: Poldo
+--  Github link: https://github.com/Polldo
 --------------------------------------------------------------------------------
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 use STD.textio.all;

@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+--  Author: Paolo Calao
+--  Alias: Poldo
+--	Github link: https://github.com/Polldo
+--------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -41,6 +47,7 @@ architecture struct of vga is
 			reset				: in std_logic;
 			-- Vga interface
 			display_enable		: in std_logic;
+			new_page			: in std_logic;
 			r_out, g_out, b_out	: out std_logic_vector(2 downto 0);
 			-- Image buffer interface
 			fifo_r_data			: in std_logic_vector(15 downto 0);
@@ -94,6 +101,7 @@ begin
 		clock 			=> clock_memory,
 		reset			=> reset,
 		display_enable 	=> disp_en_s, 
+		new_page 		=> new_page_s,
 		r_out 			=> r_out, 
 		g_out 			=> g_out, 
 		b_out 			=> b_out,
