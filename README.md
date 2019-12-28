@@ -13,9 +13,12 @@ The 128x64 screen is buffered in RAM as an 8 bit (unsigned int) array of length 
 At the moment, two buttons have been mounted in a pull-down configuration. A timer is employed, in an interrupt-based fashion, to debounce them and to continuously check whether a button is actually pressed or not. <br />
 **- Buzzer and PWM note-player** <br />
 To play game sound, a piezo-electric buzzer has been employed. This load is driven by a BJT transistor that is controlled by a PWM signal coming from the MCU. Specifically, the PWM signal is generated using an internal timer. The period of this timer will determine the frequency of the resulting signal, thus it will determine the effective note being played by the buzzer. While active, the count value of the timer is compared to another configurable register, when these 2 are equal the PWM signal is toggled. When the counter value reaches the end of its period the PWM signal is toggled again. In this way, acting on that configurable register the PWM duty cycle is modified and the volume of the buzzer is regulated. Another timer is used to control the duration of the output note: it is activated when the note starts to be transmitted and it expires according to the wanted duration for that note. When it expires, it
-stops the frequency timer and itself. In figure 2, the BJT configuration adopted is shown and the parameters of the circuit are represented. Given those values, a correct resistance Rb had to be selected. Two different resistance values were initially taken in consideration, both were valid according to the lower and upper bounds found.
-1 – Rb = 1 KΩ -> Strong saturation, more power consumption and louder piezo sound. This implies, Ib = VOH – VBE SAT𝑅𝑏 = 2.55 V / 1KΩ = 2.5 mA >> 0.18 mA = Ic / 𝛃
-2 – Rb = 10 KΩ -> Weak saturation, quieter piezo sound. Implies Ib = 2.55 V / 10 KΩ = 0.25 mA > 0.18 mA
+stops the frequency timer and itself. In figure 2, the BJT configuration adopted is shown and the parameters of the circuit are represented. Given those values, a correct resistance Rb had to be selected. Two different resistance values were initially taken in consideration, both were valid according to the lower and upper bounds found.<br />
+* **Rb = 1 KΩ** -> Strong saturation, more power consumption and louder piezo sound. <br /> 
+This implies, **Ib** = (VOH – VBE) / 𝑅𝑏 = 2.55 V / 1KΩ = **2.5 mA >> 0.18 mA** = Ic / 𝛃
+* **Rb = 10 KΩ** -> Weak saturation, quieter piezo sound. <br />
+Implies **Ib** = 2.55 V / 10 KΩ = **0.25 mA > 0.18 mA**
+<br />
 Finally, the resistor inducing a weaker saturation of the BJT was selected because the final result was still good. <br />
 
 ![Low side transistor configuration](/images/bjt_rb.png)
