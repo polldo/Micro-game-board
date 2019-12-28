@@ -1,1 +1,2 @@
-# Image-Extender
+# Micro-game board
+The final product is a low-power microcontroller-based videogame platform with the size of a keychain that can be connected to an fpga-based extender device in order to project the screen to a monitor/television. The pixel resolution of the platform is 128x64. The portable display size is 1.3 inch, while the resolution of the VGA output allowed by the extender device is 800x600@60Hz.
