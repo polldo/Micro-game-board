@@ -8,7 +8,7 @@
 #ifndef SYSCLK_H_
 #define SYSCLK_H_
 
-#include "common.h"
+#include <hw_common.h>
 
 
 void sysclk_setup();

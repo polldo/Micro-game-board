@@ -17,12 +17,13 @@ int main(void)
 	/* Loop phase */
 	while (1)
 	{
+		joystick_update();
 		/* Frame logic */
 		if (! (frame_counter % 1000) )
 			note_player_play(&song_1, LOOP_ENABLED);
-		if (joystick_pressed(BUTTON_A) && !(frame_counter % 10))
+		if (joystick_pressed(BUTTON_A)) //&& !(frame_counter % 2))
 			painter_change_dir(&paint_1);
-		if (joystick_pressed(BUTTON_B) && !(frame_counter % 10))
+		if (joystick_pressed(BUTTON_B))// && !(frame_counter % 2))
 			painter_change_dir(&paint_2);
 		painter_move(&paint_1);
 		painter_move(&paint_2);

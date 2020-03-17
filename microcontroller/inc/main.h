@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include "common.h"
+#include <hw_common.h>
 #include "sysclk.h"
 #include "refresh_timer.h"
 #include "display.h"

@@ -14,6 +14,8 @@
 #define BUTTON_B 1
 
 static volatile uint8_t button_state = 0x00;
+static volatile uint8_t button_state_old = 0x00;
+static volatile uint8_t button_pressed = 0x00;
 static volatile uint8_t button_a_count;
 static volatile uint8_t button_b_count;
 
@@ -38,6 +40,8 @@ void TIM2_IRQHandler(void)
 
 void joystick_setup()
 {
+	/* GPIO Port C clock enable */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 	/* TIM2 Clock enable */
 	__HAL_RCC_TIM2_CLK_ENABLE();
 	/* TIM2 interrupt Init */
@@ -57,8 +61,24 @@ void joystick_setup()
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
+/* Must be called at the beginning of every frame */
+void joystick_update()
+{
+	/* Sample button state to prevent abnormalities */
+	uint8_t button_state_current = button_state;
+	/* Check whether some button has been pressed */
+	button_pressed = (button_state_old ^ button_state_current) & (button_state_current ^ 0x00);
+	/* Update old button values */ 
+	button_state_old = button_state_current;
+}
+
+uint8_t joystick_held(uint8_t button)
+{
+	return button_state & (1 << button);
+}
+
 uint8_t joystick_pressed(uint8_t button)
 {
-	return (button_state & (1 << button));
+	return button_pressed & (1 << button);
 }
 

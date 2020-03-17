@@ -8,8 +8,7 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
-#include "common.h"
-
+#include "hw_common.h"
 
 void display_setup();
 void display_send();

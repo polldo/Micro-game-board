@@ -5,12 +5,12 @@
  *      Author: Poldo
  */
 
-#ifndef COMMON_H_
-#define COMMON_H_
+#ifndef HW_COMMON_H_
+#define HW_COMMON_H_
 
 #include "stm32l4xx.h"
 #include "stm32l4xx_hal.h"
 
 
 
-#endif /* COMMON_H_ */
+#endif /* HW_COMMON_H_ */

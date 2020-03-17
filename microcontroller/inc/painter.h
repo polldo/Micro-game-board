@@ -8,7 +8,7 @@
 #ifndef PAINTER_H_
 #define PAINTER_H_
 
-#include "common.h"
+#include <hw_common.h>
 #include "display.h"
 
 typedef struct painter

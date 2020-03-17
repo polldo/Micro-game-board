@@ -8,7 +8,7 @@
 #ifndef NOTE_PLAYER_H_
 #define NOTE_PLAYER_H_
 
-#include "common.h"
+#include <hw_common.h>
 
 #define LOOP_DISABLED 0
 #define LOOP_ENABLED 1

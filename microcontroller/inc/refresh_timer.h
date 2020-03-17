@@ -8,7 +8,7 @@
 #ifndef REFRESH_TIMER_H_
 #define REFRESH_TIMER_H_
 
-#include "common.h"
+#include <hw_common.h>
 
 void refresh_timer_interrupt();
 void refresh_timer_setup();

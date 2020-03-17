@@ -8,7 +8,7 @@
 #ifndef DEBUG_PIN_H_
 #define DEBUG_PIN_H_
 
-#include "common.h"
+#include <hw_common.h>
 
 #define DEBUG_PIN 	GPIO_PIN_9
 #define DEBUG_PORT 	GPIOC
