@@ -25,7 +25,7 @@ static uint8_t INIT_COMMANDS[] = {0xAE, 0x20, 0x02, 0xB0, 0xC8, 0x00,
 
 uint8_t address_config[] = {0x21, 0, 127, 0x22, 0, 7};
 
-void hw_display_init()
+void hw_display_setup()
 {
 #ifdef I2C
 	/* I2C Master mode

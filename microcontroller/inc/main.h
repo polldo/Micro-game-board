@@ -8,14 +8,14 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include <hw_common.h>
-#include "sysclk.h"
-#include "refresh_timer.h"
-#include "display.h"
-#include "joystick.h"
-#include "painter.h"
-#include "note_player.h"
-#include "debug_pin.h"
-#include "sound.h"
+#include <common.h>
+#include <hw_debug_pin.h>
+#include <refresh.h>
+#include <sysclk.h>
+#include <display.h>
+#include <joystick.h>
+#include <painter.h>
+#include <note_player.h>
+#include <sound.h>
 
 #endif /* MAIN_H_ */

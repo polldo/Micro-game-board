@@ -10,9 +10,9 @@
 
 #define I2C
 
-#include "hw_common.h"
+#include <hw_common.h>
 
-void hw_display_init();
+void hw_display_setup();
 
 void hw_display_send(uint8_t *buffer);
 

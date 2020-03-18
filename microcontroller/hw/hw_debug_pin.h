@@ -5,8 +5,8 @@
  *      Author: Poldo
  */
 
-#ifndef DEBUG_PIN_H_
-#define DEBUG_PIN_H_
+#ifndef HW_DEBUG_PIN_H_
+#define HW_DEBUG_PIN_H_
 
 #include <hw_common.h>
 
@@ -18,4 +18,4 @@
 
 void debug_pin_init();
 
-#endif /* DEBUG_PIN_H_ */
+#endif /* HW_DEBUG_PIN_H_ */

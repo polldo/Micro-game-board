@@ -8,7 +8,7 @@
 #ifndef NOTE_PLAYER_H_
 #define NOTE_PLAYER_H_
 
-#include <hw_common.h>
+#include <common.h>
 
 #define LOOP_DISABLED 0
 #define LOOP_ENABLED 1
@@ -28,6 +28,6 @@ typedef struct song
 void note_player_setup();
 void note_player_stop();
 void note_player_play(t_song *song, uint8_t loop_en);
-void TIM4_IRQHandler(void);
+void note_player_volume_set(uint8_t vol);
 
 #endif /* NOTE_PLAYER_H_ */

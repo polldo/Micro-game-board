@@ -5,13 +5,13 @@
  *      Author: Poldo
  */
 
-#include "display.h"
+#include <display.h>
 #include <hw_display.h>
 
 /* Buffer display definition. 
  * Buffer description: each bit represents a pixel, 128 cols and 64 rows bit mapping 
  */
-#define DISPLAY_LENGTH 1024+16//1024
+#define DISPLAY_LENGTH 1024
 static uint8_t display_buffer[DISPLAY_LENGTH];
 
 void display_fill(uint8_t color)
@@ -24,7 +24,7 @@ void display_fill(uint8_t color)
 
 void display_setup()
 {
-	hw_display_init();
+	hw_display_setup();
 }
 
 void display_send()

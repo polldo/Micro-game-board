@@ -5,7 +5,7 @@
  *      Author: Poldo
  */
 
-#include "debug_pin.h"
+#include <hw_debug_pin.h>
 
 
 void debug_pin_init()
